@@ -1,0 +1,21 @@
+.main_container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: radial-gradient(circle at 20% 20%, #1a1a25, #0b0b11 70%);
+}
+.chat_container {
+  height: 90vh;
+}
+.opration_container {
+  display: flex !important;
+  align-items: center;
+  padding: 1rem;
+}
+.button_container {
+  flex: 0;
+}
+.input_container {
+  flex: 2;
+  padding: 0px 3rem 0px 0px;
+}

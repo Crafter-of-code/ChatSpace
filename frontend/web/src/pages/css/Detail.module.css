@@ -1,0 +1,71 @@
+.main_container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-family: "Inter", "Poppins", sans-serif;
+
+  background: radial-gradient(circle at 20% 20%, #1a1a25, #0b0b11 70%);
+}
+
+.sub_container {
+  width: 380px;
+  padding: 40px 35px;
+
+  background: linear-gradient(160deg, #1c1c27, #111118);
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75),
+    inset 0 0 35px rgba(255, 255, 255, 0.02);
+
+  backdrop-filter: blur(10px);
+
+  transition: all 0.35s ease;
+}
+
+.sub_container:hover {
+  /* transform: translateY(-6px); */
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.9), 0 0 30px rgba(120, 120, 255, 0.15);
+}
+
+.sub_container form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.sub_container button {
+  width: 100%;
+  padding: 12px;
+
+  border-radius: 12px;
+  border: none;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  color: white;
+
+  background: linear-gradient(135deg, #6f6cff, #9d7bff);
+
+  box-shadow: 0 8px 25px rgba(111, 108, 255, 0.35);
+
+  transition: all 0.25s ease;
+}
+
+.sub_container button:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 14px 35px rgba(111, 108, 255, 0.5);
+}
+
+.sub_container button:active {
+  transform: scale(0.97);
+}

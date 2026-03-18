@@ -1,0 +1,36 @@
+.custom_button {
+  width: 100%;
+  padding: 12px 18px;
+
+  border-radius: 12px;
+  border: none;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+
+  color: white;
+
+  background: linear-gradient(135deg, #6f6cff, #9d7bff);
+
+  box-shadow: 0 8px 20px rgba(111, 108, 255, 0.35),
+    inset 0 0 8px rgba(255, 255, 255, 0.05);
+
+  transition: all 0.25s ease;
+}
+.custom_button:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 14px 35px rgba(111, 108, 255, 0.45),
+    inset 0 0 10px rgba(255, 255, 255, 0.08);
+}
+.custom_button:active {
+  transform: scale(0.96);
+}
+.custom_button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
