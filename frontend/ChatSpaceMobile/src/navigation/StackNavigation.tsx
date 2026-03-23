@@ -8,7 +8,7 @@ const StackNavigation = (): React.ReactElement => {
   return (
     <>
       <stack.Navigator
-        initialRouteName="welcome"
+        initialRouteName="chat"
         screenOptions={{
           headerShown: false,
         }}

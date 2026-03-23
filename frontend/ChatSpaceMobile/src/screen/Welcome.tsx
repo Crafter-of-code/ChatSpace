@@ -2,7 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../components/CustomButton';
+import OutlineButton from '../components/OutlineButton';
+import { apiContext } from '../store/ApiProvider';
 const Welcome = (): React.ReactElement => {
+  const { navigation, setIsCreator } = React.useContext(apiContext);
   return (
     <LinearGradient
       colors={['#1a1a25', '#0b0b11']}
@@ -16,20 +19,26 @@ const Welcome = (): React.ReactElement => {
         </Text>
 
         <View style={styles.buttonContainer}>
-          {/* <TouchableOpacity style={styles.createButton} activeOpacity={0.8}>
-            <Text style={styles.buttonText}>Create a Room</Text>
-          </TouchableOpacity> */}
-          <CustomButton
-            title="hello"
-            disabled={false}
-            onPress={() => {
-              console.log('hello world');
-            }}
-          />
-
-          <TouchableOpacity style={styles.joinButton} activeOpacity={0.8}>
-            <Text style={styles.joinText}>Join a Room</Text>
-          </TouchableOpacity>
+          <View style={styles.mainButtonContainer}>
+            <CustomButton
+              title="Create Room"
+              disabled={false}
+              onPress={() => {
+                setIsCreator(true);
+                navigation('detail');
+              }}
+            />
+          </View>
+          <View style={styles.mainButtonContainer}>
+            <OutlineButton
+              title="Join Room"
+              disabled={false}
+              onPress={() => {
+                setIsCreator(false);
+                navigation('detail');
+              }}
+            />
+          </View>
         </View>
       </View>
     </LinearGradient>
@@ -85,7 +94,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-
+  mainButtonContainer: {
+    width: '50%',
+  },
   createButton: {
     paddingVertical: 11,
     paddingHorizontal: 16,

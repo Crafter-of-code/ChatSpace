@@ -1,28 +1,55 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  FlatList,
+} from 'react-native';
 import CustomButton from '../components/CustomButton';
 import InputBox from '../components/InputBox';
-// import InputBox from '../components/InputBox';
+import { apiContext } from '../store/ApiProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import MessageContainer from '../components/MessageContainer';
 
 const Chat = (): React.ReactElement => {
-  // Temporary state to test layout
-  const [message, setMessage] = useState('');
-
-  const handleSendMessage = () => {
-    console.log('Send:', message);
-    setMessage('');
-  };
+  const { setMessage, message, sendMessageHandler, messageArray, navigation } =
+    React.useContext(apiContext);
 
   return (
     <KeyboardAvoidingView
       style={styles.mainContainer}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Chat messages area */}
-      <View style={styles.chatContainer} />
+      <SafeAreaView style={styles.chatContainer}>
+        <View style={styles.mainTopContainer}></View>
+        <View style={styles.chatContainer}>
+          <FlatList
+            style={{ flex: 1 }}
+            data={messageArray}
+            renderItem={({ item }) => {
+              return (
+                <View style={{ paddingVertical: 0 }}>
+                  <MessageContainer message={item.message} self={item.self} />
+                </View>
+              );
+            }}
+            keyExtractor={(item, index) => item.index.toString()}
+          />
+        </View>
+      </SafeAreaView>
 
       {/* Input + button area */}
       <View style={styles.operationContainer}>
+        <View>
+          <CustomButton
+            onPress={() => {
+              navigation('welcome');
+            }}
+            title="End"
+            disabled={false}
+          />
+        </View>
         <View style={styles.inputContainer}>
           <InputBox
             disabled={false}
@@ -36,7 +63,7 @@ const Chat = (): React.ReactElement => {
           <CustomButton
             title="Send"
             disabled={message === ''}
-            onPress={handleSendMessage}
+            onPress={sendMessageHandler}
           />
         </View>
       </View>
@@ -50,12 +77,11 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#0b0b11', // fallback for gradient
-    // Optional: you can add LinearGradient if desired
+    backgroundColor: '#0b0b11',
   },
 
   chatContainer: {
-    flex: 9, // 90% of height
+    flex: 9,
   },
 
   operationContainer: {
@@ -67,10 +93,13 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     flex: 2,
-    paddingRight: 15,
+    paddingHorizontal: 15,
   },
 
   buttonContainer: {
     flex: 0,
+  },
+  mainTopContainer: {
+    alignItems: 'flex-end',
   },
 });
