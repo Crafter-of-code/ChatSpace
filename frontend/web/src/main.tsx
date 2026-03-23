@@ -23,6 +23,10 @@ const router = createBrowserRouter([
         path: "chat",
         element: <Chat />,
       },
+      {
+        path: "*",
+        element: <h1>page not found</h1>,
+      },
     ],
   },
 ]);

@@ -4,8 +4,10 @@
   height: 100vh;
   background: radial-gradient(circle at 20% 20%, #1a1a25, #0b0b11 70%);
 }
-.chat_container {
+.main_chat_container {
   height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 .opration_container {
   display: flex !important;
@@ -18,4 +20,14 @@
 .input_container {
   flex: 2;
   padding: 0px 3rem 0px 0px;
+}
+.chat_container {
+  margin: 0.5rem;
+  display: flex;
+}
+.chat_container_message_direction_right {
+  justify-content: end;
+}
+.chat_container_message_direction_left {
+  justify-content: start !important;
 }

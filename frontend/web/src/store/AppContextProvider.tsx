@@ -1,26 +1,14 @@
-import React, { type SetStateAction } from "react";
+import React, { useCallback, type SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import getName from "../assets/name";
+import axios from "axios";
+import type { appContextType, typeOfMessageArray } from "./AllTypes";
 
-type appContextType = {
-  isCreator: boolean | undefined;
-  roomId: string;
-  userName: string;
-  message: string;
-  buttonDisabled: boolean;
-  dispatch: React.ActionDispatch<[action: { type: string }]>;
-  setRoomId: React.Dispatch<React.SetStateAction<string>>;
-  setUserName: React.Dispatch<React.SetStateAction<string>>;
-  handleDetailSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  navigation: (path: string) => void;
-  handleSendMessage: () => void;
-  setMessage: React.Dispatch<SetStateAction<string>>;
-};
 const appContext = React.createContext<appContextType>({
   roomId: "",
   userName: "",
   buttonDisabled: false,
   isCreator: false,
+  messageArray: [],
   navigation: () => {},
   dispatch: () => {},
   handleDetailSubmit: () => {},
@@ -37,43 +25,74 @@ export default function AppContextProvider({
   children: React.ReactNode;
 }): React.ReactElement {
   const navigate = useNavigate();
+  8;
   const location = useLocation();
   function navigation(path: string) {
     navigate(`/${path}`);
   }
-  React.useEffect(() => {
-    if (location.pathname === "/detail") {
-      navigation("");
-    }
-  }, []);
-  const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false);
-  const [isCreator, dispatch] = React.useReducer(reducer, false);
-  const [roomId, setRoomId] = React.useState("");
-  const [userName, setUserName] = React.useState("");
-  const [message, setMessage] = React.useState("");
+
   function reducer(state: boolean, action: { type: string }) {
     switch (action.type) {
       case "create-room":
         state = true;
-        setUserName(getName());
         break;
       case "join-room":
         state = false;
-        setUserName(getName());
         break;
       default:
         state = false;
         break;
     }
-    setUserName(getName());
     return state;
   }
-
+  const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false);
+  const [isCreator, dispatch] = React.useReducer(reducer, false);
+  const [roomId, setRoomId] = React.useState("");
+  const [userName, setUserName] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [messageArray, setMessageArray] = React.useState<typeOfMessageArray[]>([
+    {
+      self: false,
+      index: 1,
+      messaage: "first message from client",
+    },
+  ]);
+  const wsRef = React.useRef<WebSocket | null>(null);
+  React.useEffect(() => {
+    // if (location.pathname === "/detail") {
+    //   navigation("");
+    // } else if (location.pathname === "/chat") {
+    //   const cookiePresent = cookieStore.get("application");
+    //   cookiePresent
+    //     .then((response) => {
+    //       if (response == null) {
+    //         navigation("");
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       navigation("");
+    //     });
+    // }
+    if (roomId != "") {
+      wsRef.current = new WebSocket(`ws://localhost:9091/?roomId=${roomId}`);
+      wsRef.current.onopen = () => console.log("the app is connected");
+      wsRef.current.onmessage = (clientMessage) => console.log(clientMessage);
+    }
+  }, [location.pathname]);
   function handleDetailSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (isCreator) {
-      console.log("user is validated");
-      navigation("chat");
+      axios
+        .get("http://localhost:9090/", { withCredentials: true })
+        .then((response) => {
+          setRoomId(response.data);
+          console.log("user is validated");
+          navigation("chat");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else {
       if (userName != "" && roomId != "") {
         console.log("user is authenticated");
@@ -82,8 +101,15 @@ export default function AppContextProvider({
     }
   }
   function handleSendMessage() {
-    console.log(message);
-    setMessage("");
+    if (message != "") {
+      setMessageArray((prevValue) => {
+        return [
+          ...prevValue,
+          { index: prevValue.length + 1, messaage: message, self: true },
+        ];
+      });
+    }
+    console.log(messageArray);
   }
   return (
     <appContext.Provider
@@ -100,6 +126,7 @@ export default function AppContextProvider({
         message,
         setMessage,
         handleSendMessage,
+        messageArray,
       }}
     >
       {children}

@@ -12,7 +12,11 @@ const TakingUserDetailPage = (): React.ReactElement => {
     handleDetailSubmit,
     setRoomId,
     buttonDisabled,
+    setUserName,
   } = React.useContext(appContext);
+  React.useEffect(() => {
+    setUserName(getName());
+  }, []);
   return (
     <>
       <div className={style.main_container}>

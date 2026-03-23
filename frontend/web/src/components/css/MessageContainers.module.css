@@ -1,0 +1,22 @@
+.inner_message_container {
+  width: fit-content;
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+  color: #fff;
+}
+
+.inner_message_container_right {
+  border-radius: 1rem 0.3rem 1rem 0.3rem;
+  background: rgba(99, 102, 241, 0.25);
+}
+.inner_message_container_left {
+  border-radius: 0.3rem 1rem 0.3rem 1rem;
+
+  background: rgba(255, 255, 255, 0.1);
+}
