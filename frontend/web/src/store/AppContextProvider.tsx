@@ -1,5 +1,5 @@
-import React, { useCallback, type SetStateAction } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { appContextType, typeOfMessageArray } from "./AllTypes";
 import { errorContext } from "./ErrorContextProvider";
@@ -28,7 +28,6 @@ export default function AppContextProvider({
 }): React.ReactElement {
   const navigate = useNavigate();
   8;
-  const location = useLocation();
   function navigation(path: string) {
     navigate(`/${path}`);
   }
@@ -95,7 +94,7 @@ export default function AppContextProvider({
           ];
         });
       };
-      wsRef.current.onerror = (err) => {
+      wsRef.current.onerror = () => {
         errorSetter(true, "we are facing some error at wsRef.onerror");
         navigation("welcome");
       };
