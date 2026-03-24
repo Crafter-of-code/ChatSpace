@@ -1,0 +1,95 @@
+.main_container {
+  position: fixed;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.inner_container {
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 12px 18px;
+  border-radius: 14px;
+
+  backdrop-filter: blur(14px) saturate(160%);
+
+  min-width: 280px;
+  max-width: 500px;
+
+  animation: slideDown 0.35s ease;
+}
+
+/* 🔴 ERROR STYLE */
+.error {
+  background: rgba(255, 80, 80, 0.12); /* subtle red */
+  border: 1px solid rgba(255, 80, 80, 0.35);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 80, 80, 0.2);
+}
+
+/* 🟢 SUCCESS STYLE */
+.success {
+  background: rgba(80, 255, 140, 0.12); /* subtle green */
+  border: 1px solid rgba(80, 255, 140, 0.35);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(80, 255, 140, 0.2);
+}
+
+/* status badge */
+.status {
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: white;
+}
+
+/* dynamic badge colors */
+.error .status {
+  background: linear-gradient(135deg, #ff5f5f, #ff8a8a);
+}
+
+.success .status {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+/* message */
+.message {
+  font-size: 0.9rem;
+  color: #e6e6f0;
+  flex: 1;
+}
+
+/* close */
+.close_btn {
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.close_btn:hover {
+  color: white;
+  transform: scale(1.2);
+}
+
+/* animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

@@ -5,8 +5,23 @@ import CustomButton from "../components/CustomButton";
 import { appContext } from "../store/AppContextProvider";
 import MessageContainers from "../components/MessageContainers";
 export default function Chat(): React.ReactElement {
-  const { message, setMessage, handleSendMessage, messageArray } =
-    React.useContext(appContext);
+  const {
+    message,
+    setMessage,
+    handleSendMessage,
+    messageArray,
+    connectToWebSocket,
+    roomId,
+    navigation,
+    endChatting,
+  } = React.useContext(appContext);
+  React.useEffect(() => {
+    console.log(roomId);
+    connectToWebSocket();
+    if (roomId == "") {
+      navigation("");
+    }
+  }, [roomId]);
   return (
     <>
       <div className={style.main_container}>
@@ -27,6 +42,13 @@ export default function Chat(): React.ReactElement {
           })}
         </div>
         <div className={style.opration_container}>
+          <div className={style.button_container}>
+            <CustomButton
+              title="End"
+              disabled={false}
+              onClickFunc={endChatting}
+            />
+          </div>
           <div className={style.input_container}>
             <InputBox
               disabled={false}

@@ -19,7 +19,8 @@
 }
 .input_container {
   flex: 2;
-  padding: 0px 3rem 0px 0px;
+  padding: 0px 1rem 0px 1rem;
+  display: flex;
 }
 .chat_container {
   margin: 0.5rem;

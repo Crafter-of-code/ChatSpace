@@ -12,11 +12,11 @@ app.use(express.json());
 const rooms = new Map();
 app.get("/", (req, res) => {
   const roomId = v4();
-  rooms.set[(roomId, [])];
+  console.log(roomId);
+  rooms.set(roomId, []);
   res
     .cookie("application", "chatSpace", { maxAge: 300000 })
-    .json(roomId, roomId);
-  console.log(rooms.entries());
+    .json({ roomId: roomId });
 });
 app.listen(expressPort, () => {
   console.log(`application is running on Port ${expressPort}`);
@@ -24,18 +24,43 @@ app.listen(expressPort, () => {
 // web socket configuration
 const wss = new WebSocketServer({ port: webSocketPort });
 wss.on("connection", (ws, req) => {
-  const queryParam = req.url.substring(9, req.url.length - 1);
-  if (!rooms.has(queryParam)) {
-    return ws.close();
+  console.log(`client is connected`);
+  const roomId = new URLSearchParams(req.url.slice(1)).get("roomId");
+  let room;
+  ws.roomId;
+  if (!rooms.has(roomId)) {
+    ws.send("You room doesn't exist");
+    ws.close();
+    return;
+  } else {
+    room = rooms.get(roomId);
+    if (room.length > 2) {
+      ws.send("room is already full");
+      ws.close();
+    } else {
+      room.push(ws);
+      console.log("connected has been pushed to the array");
+    }
   }
-  const room = rooms.get(queryParam);
-  ws.on("open", () => {
-    console.log(`client is connected`);
-  });
   ws.on("message", (message) => {
-    console.log(message);
+    const otherMemberInRoom = room.filter((client) => {
+      if (client != ws) {
+        return client;
+      }
+    });
+    otherMemberInRoom.forEach((client) => {
+      client.send(message.toString());
+    });
   });
   ws.on("close", () => {
-    console.log("connection is closed");
+    const room = rooms.get(ws.roomId);
+    if (!room) return;
+    room.forEach((client) => {
+      if (client !== ws) {
+        client.send("Your partner has exited the room");
+        client.close();
+      }
+    });
+    rooms.delete(ws.roomId);
   });
 });

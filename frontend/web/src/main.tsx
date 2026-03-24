@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
+import NotFound from "./components/NotFound.tsx";
 const Welcome = lazy(() => import("./pages/Welcome.tsx"));
 const Chat = lazy(() => import("./pages/Chat.tsx"));
 const UserDetailPage = lazy(() => import("./pages/Details.tsx"));
@@ -25,13 +26,13 @@ const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <h1>page not found</h1>,
+        element: <NotFound />,
       },
     ],
   },
 ]);
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+  // <StrictMode>
+  <RouterProvider router={router} />
+  /* </StrictMode> */
 );

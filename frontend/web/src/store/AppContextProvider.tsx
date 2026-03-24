@@ -2,7 +2,7 @@ import React, { useCallback, type SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { appContextType, typeOfMessageArray } from "./AllTypes";
-
+import { errorContext } from "./ErrorContextProvider";
 const appContext = React.createContext<appContextType>({
   roomId: "",
   userName: "",
@@ -17,6 +17,8 @@ const appContext = React.createContext<appContextType>({
   message: "",
   setMessage: () => {},
   handleSendMessage: () => {},
+  connectToWebSocket: () => {},
+  endChatting: () => {},
 });
 
 export default function AppContextProvider({
@@ -45,71 +47,78 @@ export default function AppContextProvider({
     }
     return state;
   }
+  const { errorSetter } = React.useContext(errorContext);
   const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false);
   const [isCreator, dispatch] = React.useReducer(reducer, false);
   const [roomId, setRoomId] = React.useState("");
   const [userName, setUserName] = React.useState("");
   const [message, setMessage] = React.useState("");
-  const [messageArray, setMessageArray] = React.useState<typeOfMessageArray[]>([
-    {
-      self: false,
-      index: 1,
-      messaage: "first message from client",
-    },
-  ]);
+  const [messageArray, setMessageArray] = React.useState<typeOfMessageArray[]>(
+    []
+  );
   const wsRef = React.useRef<WebSocket | null>(null);
-  React.useEffect(() => {
-    // if (location.pathname === "/detail") {
-    //   navigation("");
-    // } else if (location.pathname === "/chat") {
-    //   const cookiePresent = cookieStore.get("application");
-    //   cookiePresent
-    //     .then((response) => {
-    //       if (response == null) {
-    //         navigation("");
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       navigation("");
-    //     });
-    // }
-    if (roomId != "") {
-      wsRef.current = new WebSocket(`ws://localhost:9091/?roomId=${roomId}`);
-      wsRef.current.onopen = () => console.log("the app is connected");
-      wsRef.current.onmessage = (clientMessage) => console.log(clientMessage);
-    }
-  }, [location.pathname]);
   function handleDetailSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (isCreator) {
       axios
         .get("http://localhost:9090/", { withCredentials: true })
-        .then((response) => {
-          setRoomId(response.data);
-          console.log("user is validated");
+        .then(async (response) => {
+          setRoomId(response.data.roomId);
           navigation("chat");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          errorSetter(true, "we got error axios call");
         });
     } else {
       if (userName != "" && roomId != "") {
         console.log("user is authenticated");
         navigation("chat");
+      } else {
+        errorSetter(true, "please provide information");
       }
     }
   }
+
+  function connectToWebSocket() {
+    if (roomId != "") {
+      wsRef.current = new WebSocket(`ws://localhost:9091/?roomId=${roomId}`);
+      wsRef.current.onopen = () => errorSetter(false, "you are connected");
+      wsRef.current.onmessage = (clientMessage) => {
+        setMessageArray((prevValue) => {
+          return [
+            ...prevValue,
+            {
+              index: prevValue.length + 1,
+              self: false,
+              messaage: clientMessage.data,
+            },
+          ];
+        });
+      };
+      wsRef.current.onerror = (err) => {
+        errorSetter(true, "we are facing some error at wsRef.onerror");
+        navigation("welcome");
+      };
+      wsRef.current.onclose = () =>
+        errorSetter(false, "the connection has been closed");
+    }
+  }
   function handleSendMessage() {
-    if (message != "") {
+    if (message != "" && wsRef.current?.readyState == WebSocket.OPEN) {
+      wsRef.current?.send(message);
       setMessageArray((prevValue) => {
         return [
           ...prevValue,
           { index: prevValue.length + 1, messaage: message, self: true },
         ];
       });
+    } else {
+      errorSetter(true, "we are faceing some problem");
     }
-    console.log(messageArray);
+  }
+  function endChatting() {
+    wsRef.current?.close();
+    setRoomId("");
   }
   return (
     <appContext.Provider
@@ -127,6 +136,8 @@ export default function AppContextProvider({
         setMessage,
         handleSendMessage,
         messageArray,
+        connectToWebSocket,
+        endChatting,
       }}
     >
       {children}

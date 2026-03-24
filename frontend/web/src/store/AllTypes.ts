@@ -14,6 +14,8 @@ export type appContextType = {
   navigation: (path: string) => void;
   handleSendMessage: () => void;
   setMessage: React.Dispatch<SetStateAction<string>>;
+  connectToWebSocket: () => void;
+  endChatting: () => void;
 };
 export type typeOfMessageArray = {
   index: number;
@@ -23,4 +25,9 @@ export type typeOfMessageArray = {
 export type messageContainerComponentProp = {
   message: string;
   self: boolean;
+};
+export type errorContextType = {
+  errorStatus: boolean;
+  errorMessage: string;
+  errorSetter: (status: boolean, message: string) => void;
 };
