@@ -10,9 +10,20 @@
   flex-direction: column;
 }
 .opration_container {
-  display: flex !important;
   align-items: center;
   padding: 1rem;
+}
+.opration_inner_container {
+  display: flex;
+  align-items: center;
+}
+.roomId_container_paragraph {
+  color: white;
+  margin-bottom: 1rem;
+  user-select: none;
+}
+.additional_function_container {
+  margin: 1rem 0rem;
 }
 .button_container {
   flex: 0;

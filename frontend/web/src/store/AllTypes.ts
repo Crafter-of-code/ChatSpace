@@ -16,6 +16,7 @@ export type appContextType = {
   setMessage: React.Dispatch<SetStateAction<string>>;
   connectToWebSocket: () => void;
   endChatting: () => void;
+  copyLinkToClipBoard: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 export type typeOfMessageArray = {
   index: number;

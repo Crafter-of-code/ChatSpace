@@ -19,6 +19,7 @@ const appContext = React.createContext<appContextType>({
   handleSendMessage: () => {},
   connectToWebSocket: () => {},
   endChatting: () => {},
+  copyLinkToClipBoard: (event: React.MouseEvent<HTMLButtonElement>) => {},
 });
 
 export default function AppContextProvider({
@@ -115,9 +116,23 @@ export default function AppContextProvider({
       errorSetter(true, "we are faceing some problem");
     }
   }
+  // function
   function endChatting() {
     wsRef.current?.close();
     setRoomId("");
+  }
+  async function copyLinkToClipBoard(
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
+    event.preventDefault();
+    await navigator.clipboard
+      .writeText(`ws://localhost:9091/?roomId=${roomId}`)
+      .then(() => {
+        errorSetter(false, "The link is copied to text board");
+      })
+      .catch(() => {
+        errorSetter(true, "failed to copy the link to text board");
+      });
   }
   return (
     <appContext.Provider
@@ -137,6 +152,7 @@ export default function AppContextProvider({
         messageArray,
         connectToWebSocket,
         endChatting,
+        copyLinkToClipBoard,
       }}
     >
       {children}

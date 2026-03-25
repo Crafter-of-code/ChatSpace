@@ -11,7 +11,6 @@ const TakingUserDetailPage = (): React.ReactElement => {
     userName,
     handleDetailSubmit,
     setRoomId,
-    buttonDisabled,
     setUserName,
   } = React.useContext(appContext);
   React.useEffect(() => {

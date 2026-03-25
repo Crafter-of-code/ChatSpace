@@ -14,6 +14,7 @@ export default function Chat(): React.ReactElement {
     roomId,
     navigation,
     endChatting,
+    copyLinkToClipBoard,
   } = React.useContext(appContext);
   React.useEffect(() => {
     console.log(roomId);
@@ -41,28 +42,39 @@ export default function Chat(): React.ReactElement {
             );
           })}
         </div>
+
         <div className={style.opration_container}>
-          <div className={style.button_container}>
+          <div className={style.additional_function_container}>
+            <p className={style.roomId_container_paragraph}>{roomId}</p>
             <CustomButton
-              title="End"
+              title="Copy room link"
               disabled={false}
-              onClickFunc={endChatting}
+              onClickFunc={copyLinkToClipBoard}
             />
           </div>
-          <div className={style.input_container}>
-            <InputBox
-              disabled={false}
-              placeHolder="Write you message here"
-              value={message}
-              setValue={setMessage}
-            />
-          </div>
-          <div className={style.button_container}>
-            <CustomButton
-              title="Send"
-              disabled={message != "" ? false : true}
-              onClickFunc={handleSendMessage}
-            />
+          <div className={style.opration_inner_container}>
+            <div className={style.button_container}>
+              <CustomButton
+                title="End"
+                disabled={false}
+                onClickFunc={endChatting}
+              />
+            </div>
+            <div className={style.input_container}>
+              <InputBox
+                disabled={false}
+                placeHolder="Write you message here"
+                value={message}
+                setValue={setMessage}
+              />
+            </div>
+            <div className={style.button_container}>
+              <CustomButton
+                title="Send"
+                disabled={message != "" ? false : true}
+                onClickFunc={handleSendMessage}
+              />
+            </div>
           </div>
         </div>
       </div>
