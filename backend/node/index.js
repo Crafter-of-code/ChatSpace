@@ -34,9 +34,11 @@ wss.on("connection", (ws, req) => {
     return;
   } else {
     room = rooms.get(roomId);
-    if (room.length > 2) {
-      ws.send("room is already full");
-      ws.close();
+    if (room.length >= 2) {
+      ws.send(
+        JSON.stringify({ type: "error", message: "room is already full" })
+      );
+      ws.close(1000, "room is full");
     } else {
       room.push(ws);
       console.log("connected has been pushed to the array");
@@ -44,23 +46,22 @@ wss.on("connection", (ws, req) => {
   }
   ws.on("message", (message) => {
     const otherMemberInRoom = room.filter((client) => {
-      if (client != ws) {
-        return client;
-      }
+      if (client != ws) return client;
     });
     otherMemberInRoom.forEach((client) => {
-      client.send(message.toString());
+      client.send(
+        JSON.stringify({ type: "message", message: message.toString() })
+      );
     });
   });
   ws.on("close", () => {
-    const room = rooms.get(ws.roomId);
     if (!room) return;
     room.forEach((client) => {
-      if (client !== ws) {
-        client.send("Your partner has exited the room");
-        client.close();
+      if (client != ws) {
+        client.close(1000, "the other client disconnected");
       }
     });
-    rooms.delete(ws.roomId);
+    console.log("room has been delted");
+    rooms.delete(room);
   });
 });

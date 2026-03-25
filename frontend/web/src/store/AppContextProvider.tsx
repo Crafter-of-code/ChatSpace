@@ -84,23 +84,31 @@ export default function AppContextProvider({
       wsRef.current = new WebSocket(`ws://localhost:9091/?roomId=${roomId}`);
       wsRef.current.onopen = () => errorSetter(false, "you are connected");
       wsRef.current.onmessage = (clientMessage) => {
-        setMessageArray((prevValue) => {
-          return [
-            ...prevValue,
-            {
-              index: prevValue.length + 1,
-              self: false,
-              messaage: clientMessage.data,
-            },
-          ];
-        });
+        const data = JSON.parse(clientMessage.data);
+        console.log(data);
+        if (data.type == "error") {
+          errorSetter(true, clientMessage.data.messaage);
+        } else {
+          setMessageArray((prevValue) => {
+            return [
+              ...prevValue,
+              {
+                index: prevValue.length + 1,
+                self: false,
+                messaage: data.message,
+              },
+            ];
+          });
+        }
       };
       wsRef.current.onerror = () => {
         errorSetter(true, "we are facing some error at wsRef.onerror");
         navigation("welcome");
       };
-      wsRef.current.onclose = () =>
-        errorSetter(false, "the connection has been closed");
+      wsRef.current.onclose = (err) => {
+        errorSetter(true, err.reason);
+        navigation("");
+      };
     }
   }
   function handleSendMessage() {
@@ -112,6 +120,7 @@ export default function AppContextProvider({
           { index: prevValue.length + 1, messaage: message, self: true },
         ];
       });
+      setMessage("");
     } else {
       errorSetter(true, "we are faceing some problem");
     }
@@ -126,7 +135,7 @@ export default function AppContextProvider({
   ) {
     event.preventDefault();
     await navigator.clipboard
-      .writeText(`ws://localhost:9091/?roomId=${roomId}`)
+      .writeText(`${roomId}`)
       .then(() => {
         errorSetter(false, "The link is copied to text board");
       })
