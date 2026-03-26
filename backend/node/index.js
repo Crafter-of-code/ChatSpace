@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import { configDotenv } from "dotenv";
 import { v4 } from "uuid";
 import cors from "cors";
@@ -12,7 +12,6 @@ app.use(express.json());
 const rooms = new Map();
 app.get("/", (req, res) => {
   const roomId = v4();
-  console.log(roomId);
   rooms.set(roomId, []);
   res
     .cookie("application", "chatSpace", { maxAge: 300000 })
@@ -24,13 +23,20 @@ app.listen(expressPort, () => {
 // web socket configuration
 const wss = new WebSocketServer({ port: webSocketPort });
 wss.on("connection", (ws, req) => {
+  console.log(`-------------------`);
   console.log(`client is connected`);
+  console.log(`-------------------`);
   const roomId = new URLSearchParams(req.url.slice(1)).get("roomId");
   let room;
   ws.roomId;
   if (!rooms.has(roomId)) {
-    ws.send("You room doesn't exist");
-    ws.close();
+    ws.send(
+      JSON.stringify({
+        type: "error",
+        message: "Unable to add you in the room at this time",
+      })
+    );
+    ws.close(1000, "connection has been close");
     return;
   } else {
     room = rooms.get(roomId);
@@ -41,7 +47,6 @@ wss.on("connection", (ws, req) => {
       ws.close(1000, "room is full");
     } else {
       room.push(ws);
-      console.log("connected has been pushed to the array");
     }
   }
   ws.on("message", (message) => {
@@ -61,7 +66,6 @@ wss.on("connection", (ws, req) => {
         client.close(1000, "the other client disconnected");
       }
     });
-    console.log("room has been delted");
     rooms.delete(room);
   });
 });

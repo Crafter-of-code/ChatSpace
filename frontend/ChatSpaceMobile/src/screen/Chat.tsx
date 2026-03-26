@@ -13,9 +13,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MessageContainer from '../components/MessageContainer';
 
 const Chat = (): React.ReactElement => {
-  const { setMessage, message, sendMessageHandler, messageArray, navigation } =
-    React.useContext(apiContext);
-
+  const {
+    roomId,
+    setMessage,
+    message,
+    sendMessageHandler,
+    messageArray,
+    navigation,
+    connectToWebSocket,
+    endMetting,
+    copyToClipBoard,
+  } = React.useContext(apiContext);
+  React.useEffect(() => {
+    connectToWebSocket();
+  });
   return (
     <KeyboardAvoidingView
       style={styles.mainContainer}
@@ -40,11 +51,20 @@ const Chat = (): React.ReactElement => {
       </SafeAreaView>
 
       {/* Input + button area */}
+      <View style={styles.copyButton}>
+        <CustomButton
+          onPress={() => {
+            copyToClipBoard(roomId);
+          }}
+          title="Copy Room Id"
+          disabled={false}
+        />
+      </View>
       <View style={styles.operationContainer}>
         <View>
           <CustomButton
             onPress={() => {
-              navigation('welcome');
+              endMetting();
             }}
             title="End"
             disabled={false}
@@ -101,5 +121,8 @@ const styles = StyleSheet.create({
   },
   mainTopContainer: {
     alignItems: 'flex-end',
+  },
+  copyButton: {
+    paddingHorizontal: 16,
   },
 });

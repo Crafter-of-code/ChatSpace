@@ -6,10 +6,15 @@ import CustomButton from '../components/CustomButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { apiContext } from '../store/ApiProvider';
 import getName from '../store/names';
-
 const Detail = (): React.ReactElement => {
-  const { isCreator, userName, roomId, setUserName, setRoomId } =
-    React.useContext(apiContext);
+  const {
+    isCreator,
+    userName,
+    roomId,
+    setUserName,
+    setRoomId,
+    createOrJoinRoom,
+  } = React.useContext(apiContext);
   React.useEffect(() => {
     setUserName(getName());
   }, []);
@@ -66,7 +71,7 @@ const Detail = (): React.ReactElement => {
             <CustomButton
               title={isCreator ? 'Create Room' : 'Join Room'}
               onPress={() => {
-                console.log(isCreator ? 'creating room' : 'joining room');
+                createOrJoinRoom();
               }}
               disabled={false}
             />
